@@ -1,6 +1,6 @@
 (* open Tokenizer *)
 (* open Evaluator *)
-open Parser
+open Forthish.Parser
 
 let pop_output = function
   | Module (name, fns, modls, out, i) ->

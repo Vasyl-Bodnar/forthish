@@ -6,6 +6,8 @@
 
 (authors "Vasyl Bodnar")
 
+(maintainer "Vasyl-Bodnar")
+
 (license MIT)
 
 (package

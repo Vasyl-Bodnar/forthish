@@ -1,4 +1,5 @@
 (executable
  (public_name forthish)
  (name main)
- (libraries forthish))
+ (libraries forthish)
+ (modules main interpreter))

@@ -1,4 +1,4 @@
-open Forthish.Interpretor
+open Interpreter
 
 let usage_msg = "forthish [(-e <expression>) | <filename>]"
 let filename = ref ""
