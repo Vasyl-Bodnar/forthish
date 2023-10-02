@@ -29,21 +29,23 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-    - name: Setup OCaml and Js_Of_Ocaml
-      uses: nmittu/setup-dune@v2
-      with:
-        packages: js_of_ocaml js_of_ocaml-ppx ocamline
-    - name: Run Js_Of_Ocaml
-      run: dune build @default
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Setup Pages
-      uses: actions/configure-pages@v3
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v2
-      with:
-        # Upload built web files
-        path: '_build/default/web'
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v2
+      - name: Set up OCaml
+        # uses: ocaml/setup-ocaml@fffe57d86645348995b5b2d7b56c58e0455e6de4
+        uses: ocaml/setup-ocaml@v2.0.21
+        with:
+          ocaml-compiler: 5.1
+          dune-cache: true
+      - run: opam install . --deps-only
+      - run: opam exec -- dune build @default
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          # Upload built web files
+          path: '_build/default/web'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
