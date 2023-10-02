@@ -6,7 +6,7 @@
 
 (authors "Vasyl Bodnar")
 
-(maintainer "Vasyl-Bodnar")
+(maintainers "Vasyl-Bodnar")
 
 (license MIT)
 
