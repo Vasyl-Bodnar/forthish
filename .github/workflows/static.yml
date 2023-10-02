@@ -37,7 +37,8 @@ jobs:
         with:
           ocaml-compiler: 5.1
           dune-cache: true
-      - run: opam install . --deps-only
+      - run: opam install . --deps-only --working-dir
+      - run: opam install js_of_ocaml js_of_ocaml-ppx
       - run: opam exec -- dune build @default
       - name: Setup Pages
         uses: actions/configure-pages@v3
