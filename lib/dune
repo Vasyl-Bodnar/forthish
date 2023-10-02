@@ -1,0 +1,4 @@
+(library
+ (name forthish)
+ (libraries ocamline)
+ (modules tokenizer evaluator interpretor parser))
