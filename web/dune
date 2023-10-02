@@ -12,4 +12,4 @@
 
 (alias
  (name default)
- (deps main.js index.html index.css std/list.4ish std/util.4ish))
+ (deps main.js index.html index.css))
