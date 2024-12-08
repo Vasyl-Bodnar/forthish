@@ -20,12 +20,14 @@ Forthish is a stack-based, functional concatenative programming language inspire
 - Literals can be Integers (-35 or 21), Strings (`"Hello"`), or Boolean values (`true` or `false`).
 - Comments are enclosed in parentheses `( )` as is traditional in Forth.
 
+You can find a tree-sitter grammar for this language [here](https://github.com/Vasyl-Bodnar/tree-sitter-forthish).
+
 ### Built-in Words
 
 Certain words are already predefined as core for various uses:
 
 - Stack manipulation: `dup`, `pop`, `swap`, `over`, `rot`
-- Control flow: `if`, `open` (opens quotes)
+- Control flow: `if`, `open` (opens and evaluates quotes as though they were words),
 - List operations: `hd`, `tl`, `shd`, `stl`, `chars`, `concat`, `quote`, `+quote`
 - Arithmetic operations: `+`, `-`, `*`, `**`, `/`, `%`
 - Comparison operations: `=`, `<>`, `>`, `<`
@@ -41,9 +43,10 @@ Certain words are already predefined as core for various uses:
 
 Files are considered modules, and can be imported using the `use` or `useup` word. 
 
-For example, `"file.ftsh" use` will import the file level module in `file.ftsh` from same directory as `File`. 
+For example, `"file.fthish" use` will import the file level module in `file.fthish` from same directory. 
+This module will be available as `File` in this case. 
 
-Alternatively, `"file.ftsh" useup` will merge the file level module into the current scope, so that the words are available directly.
+Alternatively, `"file.fthish" useup` will merge the file level module into the current scope, so that the words are available directly.
 
 You can also define modules directly using the `SomeModule: ( Some Words and Definitions ) ;` syntax. 
 It would be evaluated the same way as a file and brought into scope in the way of `use`.
@@ -68,7 +71,9 @@ Here are some simple examples of Forthish code:
 5 fact .
 [ 5 6 7 8 ] sum .
 8 fib .
-(Outputs:120 26 21)
+( Prints
+120 26 21
+)
 ```
 
 ```forth
@@ -98,16 +103,15 @@ Ingrdt:Onion Recipe:add nl
 Ingrdt:Salt Recipe:add nl
 Ingrdt:Pepper Recipe:add nl
 Recipe:finish
-;
 ```
 
 ### Building
 
 There are three components here, the REPL and file interpreter in `bin/`, the parser and core interpreter in `lib/`, and web interface in `web/`.
 
-You can build them using dune, simply by running `dune build` for binary and `dune build @default` for the web interface.
+You can build them using dune, simply by running `dune build` for binary and library, and `dune build @default` for the web interface.
 
-There are dependencies on `js_of_ocaml` and `ocamline`, so you may need to install them with `opam`.
+There are dependencies on `js_of_ocaml`, `dune-site` and `ocamline`, so you may need to install them with `opam`.
 
 ### Usage
 
@@ -116,6 +120,7 @@ There are dependencies on `js_of_ocaml` and `ocamline`, so you may need to insta
 - `forthish file.fthish` will interpret the file.
 - `forthish -e "code"` will interpret the code string.
 - `forthish -i <file> arg1 arg2` will run the interpreter on a file and provide bash style arguments ($0 is the file name string, $1 is the first argument string, etc).
+  Note that this is meant for shebang style usage, and the first line of the file will be ignored.
 - `forthish [-]-help` will show the help message.
 
 The web interface can be run locally in the `_build/default/web` directory using `python3 -m http.server` or similar.

@@ -17,6 +17,6 @@
  (description "Interpreter for a Custom Forth-inspired Language")
  (depends ocaml dune)
  (tags
-  (language interpreter forthish))
+  (language interpreter forthish forth))
  (sites (lib_root forthish_std)))
 
