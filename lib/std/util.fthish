@@ -1,0 +1,28 @@
+: id ; ( -> )
+
+: quote+ quote + ;
+
+: succ 1 + ;
+
+: pred 1 - ;
+
+: rott rot rot ; ( a b c -> c a b )
+
+: dup2 over over ; ( a b -> a b a b )
+
+: <= dup2 = rrot < or ; ( =a a -> a )
+
+: int->bool 0 > ; ( i -> ? )
+
+: bool->int [1] [0] if ; ( ? -> i )
+
+: mapq
+  : sshd 
+    dup tl [] =
+    [] [ tl sshd ] if ;
+  : inn 
+    dup tl [] <>
+    [ dup stl inn swap sshd quote+ ]
+    [ quote ]
+    if ;
+  inn ;

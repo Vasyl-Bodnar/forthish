@@ -1,5 +1,4 @@
-(* open Tokenizer *)
-(* open Evaluator *)
+open Printf
 open Forthish.Parser
 
 let pop_output = function
@@ -9,11 +8,17 @@ let pop_output = function
 
 let handle_err feval =
   try feval () with
-  | Eval_err (s, i) -> print_string (s ^ " at line: " ^ string_of_int i)
-  | Parse_err (s, i) -> print_string (s ^ " at line: " ^ string_of_int i)
+  | Eval_err (s, Module (name, _, _, _, i)) ->
+      print_string
+        (s ^ " at line: " ^ string_of_int i
+        ^ if name = "" then "" else " in module " ^ name)
+  | Parse_err (s, Module (name, _, _, _, i)) ->
+      print_string
+        (s ^ " at line: " ^ string_of_int i
+        ^ if name = "" then "" else " in module " ^ name)
   | Sys_error s -> print_string s
   | Failure s -> print_string s
-  | End_of_file -> print_newline ()
+  | End_of_file -> ()
   | Not_found -> print_string "Err! No Such Definition"
   | Stack.Empty -> print_string "Err! Empty Stack"
   | Division_by_zero -> print_string "Err! Division by Zero"
@@ -45,10 +50,29 @@ let string_run str =
   (fun () ->
     let _ = parse (create "") (String.to_seq str ()) |> pop_output in
     ())
-  |> handle_err |> print_newline
+  |> handle_err
 
 let file_run name =
   (fun () ->
     let _ = eval_file name |> pop_output in
     ())
-  |> handle_err |> print_newline
+  |> handle_err
+
+let file_run_with_args name args =
+  (fun () ->
+    let modl =
+      List.fold_left
+        (fun (m, acc) x ->
+          (parse m (String.to_seq (sprintf ": $%i \"%s\" ;" acc x) ()), acc + 1))
+        (create name, 0)
+        (name :: args)
+      |> fun (m, _) -> m
+    in
+    let _ =
+      open_in name |> fun ic ->
+      let _ = In_channel.input_line ic in
+      In_channel.input_all ic |> fun x ->
+      String.to_seq x () |> parse modl |> pop_output
+    in
+    ())
+  |> handle_err

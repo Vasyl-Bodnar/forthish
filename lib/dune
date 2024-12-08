@@ -1,4 +1,14 @@
 (library
  (name forthish)
- (libraries ocamline)
- (modules tokenizer evaluator parser))
+ (modules parser stdl)
+ (libraries dune-site))
+
+(generate_sites_module
+ (module stdl)
+ (sites forthish))
+
+(install
+ (section (site (forthish forthish_std)))
+ (files
+  std/list.fthish
+  (std/util.fthish as util.fthish)))

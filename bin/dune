@@ -1,5 +1,5 @@
 (executable
  (public_name forthish)
  (name main)
- (libraries forthish)
+ (libraries forthish ocamline)
  (modules main interpreter))

@@ -45,6 +45,17 @@ let std_lib : string =
 
 : bool->int [1] [0] if ; ( ? -> i )
 
+: mapq
+  : sshd 
+    dup tl [] =
+    [] [ tl sshd ] if ;
+  : inn 
+    dup tl [] <>
+    [ dup stl inn swap sshd quote+ ]
+    [ quote ]
+    if ;
+  inn ;
+
 : dotimes ( q i -> ! )
   : I take ;
   : F take open ;
@@ -55,6 +66,8 @@ let std_lib : string =
     if ;
   inn ;
 
+: dump [ . ] len 1 - dotimes ;
+
 : .. ( i i -> qi )
   : I take 1 - ;
   [] +quote [ dup hd succ swap +quote ] I dotimes ;
@@ -63,6 +76,15 @@ let std_lib : string =
   : I take ;
   : A take ;
   [] [ A swap +quote ] I dotimes ;
+
+: interleave (qa b -> q[a b a..])
+  : V take ;
+  : inn 
+    dup [] <>
+    [ dup hd : H take ; tl inn H quote+ V + ]
+    [ ]
+    if ;
+  inn ;
 
 : fold ( qa qb :qb a -> qb; -> qb )
   : F take open ;
@@ -99,6 +121,7 @@ let std_lib : string =
       [ pop ]
     if ;
   dup hd swap tl swap inn ;
+
 : mem ( qa a -> ? )
   [ = [ pop true ] [] if ] +quote false swap rfold ;
 
@@ -140,6 +163,9 @@ let std_lib : string =
 
 : min ( =qa -> a )
   [ dup2 < [ pop ] [ swap pop ] if ] rreduce ;
+
+: enum!
+  mapq [ [ bind ] +quote ] rmap [ open ] interleave ;
 
 : match ( [ a [?] ] -> a )
   [ ] [ open open [ swap +quote ] [ pop [] + ] if ] fold ;
@@ -184,8 +210,7 @@ let std_lib : string =
      [8 ["8" = ]]
      [9 ["9" = ]]
    ] matchw open
-  ] rmap 0 [ 10 * swap 10 * + ] fold 10 / ;
-|}
+  ] rmap 0 [ 10 * swap 10 * + ] fold 10 / ;|}
 
 let onload _ =
   let d = Html.document in
