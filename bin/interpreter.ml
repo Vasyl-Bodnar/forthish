@@ -2,20 +2,59 @@ open Printf
 open Forthish.Parser
 
 let pop_output = function
-  | Module (name, fns, modls, out, i) ->
+  | Module (name, fns, modls, out, i, j) ->
       print_endline out;
-      Module (name, fns, modls, "", i)
+      Module (name, fns, modls, "", i, j)
 
 let handle_err feval =
   try feval () with
-  | Eval_err (s, Module (name, _, _, _, i)) ->
+  | IO_err s -> print_string s
+  | Eval_err (s, Module (name, _, _, _, i, j), (tok, mname, line, loc)) ->
       print_string
-        (s ^ " at line: " ^ string_of_int i
-        ^ if name = "" then "" else " in module " ^ name)
-  | Parse_err (s, Module (name, _, _, _, i)) ->
+      @@ String.concat " "
+           [
+             "Error:";
+             s;
+             "\nThis was found at line:";
+             string_of_int i;
+             "and column:";
+             string_of_int j;
+             (if name = "" then "" else "in module");
+             name;
+             (if tok = Error then "\nSource is from line:"
+              else
+                "\nSource is expression: "
+                ^ string_of_tok (tok, mname, line, loc)
+                ^ " from line:");
+             string_of_int line;
+             "and column:";
+             string_of_int loc;
+             (if mname = "" then "" else "in module");
+             mname;
+           ]
+  | Parse_err (s, Module (name, _, _, _, i, j), (tok, mname, line, loc)) ->
       print_string
-        (s ^ " at line: " ^ string_of_int i
-        ^ if name = "" then "" else " in module " ^ name)
+      @@ String.concat " "
+           [
+             "Error:";
+             s;
+             "\nThis was found at line:";
+             string_of_int i;
+             "and column:";
+             string_of_int j;
+             (if name = "" then "" else "in module");
+             name;
+             (if tok = Error then "\nSource is from line:"
+              else
+                "\nSource is expression: "
+                ^ string_of_tok (tok, mname, line, loc)
+                ^ " from line:");
+             string_of_int line;
+             "and column:";
+             string_of_int loc;
+             (if mname = "" then "" else "in module");
+             mname;
+           ]
   | Sys_error s -> print_string s
   | Failure s -> print_string s
   | End_of_file -> ()
@@ -35,8 +74,8 @@ let run () =
       Ocamline.read ~brackets:[ ('(', ')'); ('[', ']') ] ~strings:[ '"' ] ()
       |> fun x -> String.to_seq x () |> parse modl |> pop_output |> inn
     with
-    | Eval_err (s, _) -> ignore_err s modl
-    | Parse_err (s, _) -> ignore_err s modl
+    | Eval_err (s, _, _) -> ignore_err s modl
+    | Parse_err (s, _, _) -> ignore_err s modl
     | Sys_error s -> ignore_err s modl
     | Failure s -> ignore_err s modl
     | End_of_file -> ignore_err "" modl

@@ -3,14 +3,16 @@ module Html = Dom_html
 open Forthish.Parser
 
 let pop_output = function
-  | Module (name, fns, modls, out, i) -> (out, Module (name, fns, modls, "", i))
+  | Module (name, fns, modls, out, i, j) ->
+      (out, Module (name, fns, modls, "", i, j))
 
 let run modl str =
   try
     String.trim str |> fun s -> (String.to_seq s) () |> parse modl |> pop_output
   with
-  | Eval_err (s, _) -> (s, modl)
-  | Parse_err (s, _) -> (s, modl)
+  | IO_err s -> (s, modl)
+  | Eval_err (s, _, _) -> (s, modl)
+  | Parse_err (s, _, _) -> (s, modl)
   | Sys_error s -> (s, modl)
   | Failure s -> (s, modl)
   | End_of_file -> ("", modl)

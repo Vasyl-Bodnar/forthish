@@ -6,7 +6,7 @@
   : inn
     I 0 >
       [ F I 1 - : I take ; inn ]
-      [ ]
+      []
     if ;
   inn ;
 
@@ -26,7 +26,7 @@
   : inn 
     dup [] <>
     [ dup hd : H take ; tl inn H quote+ V + ]
-    [ ]
+    []
     if ;
   inn ;
 
@@ -137,10 +137,11 @@
   mapq [ [ bind ] +quote ] rmap [ open ] interleave ;
 
 : match ( [ a [?] ] -> a )
-  [ ] [ open open [ swap +quote ] [ pop [] + ] if ] fold ;
+  [] [ open open [ swap +quote ] [ pop [] + ] if ] fold ;
 
+( Note: Matches all true elements, not just the first )
 : matchw ( a [ b :a -> ?; ] -> b )
-  swap : A take ; [ ] [ open A swap open [ swap +quote ] [ pop [] + ] if ] fold ;
+  swap : A take ; [] [ open A swap open [ swap +quote ] [ pop [] + ] if ] fold ;
 
 : digits (i -> q)
   : TL [] ;
